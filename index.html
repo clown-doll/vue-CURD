@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>vue - CURD</title>
+	<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+	
+	<div id="app" class="app">
+		<div class="search">
+			<label for="">Search</label>
+			<input type="text" v-model="searchQuery">
+		</div>
+        <!-- 应用表格数据，并绑定父组件数据 -->
+        <data-table v-bind:data-list="people" v-bind:search-key="searchQuery" v-bind:columns="columns"></data-table>
+		<!-- 应用表格数据，并绑定父组件数据 -->
+	</div>
+
+   
+    <!-- table component -->
+    <template id="form-template">
+        <table class="form-table">
+            <thead>
+                <tr>
+                    <th v-for="col in columns">
+                        {{col.name | capitalize}}
+                    </th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody> 
+                <tr v-for="(index, item) in dataList | filterBy searchKey">    
+                    <td v-for="col in columns">
+                        {{item[col.name]}}
+                    </td>
+                    <td>
+                        <button class="btn btn-red">delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="btn btn-blue btn-large create-new" v-on:click="openNewItemDialog('Create New Item')">create</button>
+        <modal-dialog v-bind:dialog-title="title"></modal-dialog>
+    </template>
+    <!-- /table component -->
+
+
+    <!-- dialog component -->
+    <template id="dialog-template">
+        <div class="dialog" v-bind:class="{'dialog-active': show}">
+            <div class="dialog-overlay"></div>
+            <div class="dialog-content">
+                <div class="dialog-header">
+                    <h1>{{dialogTitle}}</h1>
+                </div>
+                <div class="dialog-body">
+                    <div class="form-group">
+                        <label for="">name</label>
+                        <input type="text">
+                    </div>
+                    <div class="form-group">
+                        <label for="">age</label>
+                        <input type="text">
+                    </div>
+                    <div class="form-group">
+                        <label for="">sex</label>
+                        <select name="" id="">
+                            <option value="">male</option>
+                            <option value="">female</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="dialog-footer">
+                    <button class="btn btn-large btn-blue">Save</button>
+                    <button class="btn btn-large">Cancle</button>
+                </div>
+            </div>
+        </div>
+    </template>
+    <!-- /dialog component -->
+
+	<script src="js/vue.js"></script>
+	<script>
+        // 注册并定义表格组件
+        Vue.component("data-table", {
+            template: "#form-template",
+            props: ["dataList", "searchKey", "columns"],
+            data: function() {
+                return {
+                    title: ""
+                }
+            },
+            methods: {
+                openNewItemDialog: function(title) {
+                    this.title = title;
+                    this.$broadcast("showDialog", true);
+                }
+            },
+            components: {
+                "modal-dialog": {
+                    template: "#dialog-template",
+                    props: ["dialogTitle"],
+                    data: function(){
+                        return {
+                            show: false
+                        }
+                    },
+                    events: {
+                        "showDialog": function(flag) {
+                            this.show = flag;
+                        }
+                    }
+                }
+            }
+        });
+
+        // 实例化
+        var vm = new Vue({
+            el: "#app",
+            data: {
+                searchQuery: "",
+                columns: [
+                    {
+                        name: "name"
+                    },
+                    {
+                        name: "age"
+                    },
+                    {
+                        name: "sex"
+                    }
+                ],
+                people: [
+                    {
+                        name: "Jack",
+                        age: 30,
+                        sex: "Male"
+                    },
+                    {
+                        name: "Bill",
+                        age: 30,
+                        sex: "Male"
+                    },
+                    {
+                        name: "Tracy",
+                        age: 28,
+                        sex: "Female"
+                    },
+                    {
+                        name: "Chris",
+                        age: 32,
+                        sex: "Male"
+                    }
+                ]
+            }
+        })
+	</script>
+</body>
+</html>
