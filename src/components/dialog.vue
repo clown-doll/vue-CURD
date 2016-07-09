@@ -21,24 +21,18 @@
                 <h1>{{dialogTitle}}</h1>
             </div>
             <div class="dialog-body">
-                <div class="form-group">
-                    <label for="">name</label>
-                    <input type="text">
-                </div>
-                <div class="form-group">
-                    <label for="">age</label>
-                    <input type="text">
-                </div>
-                <div class="form-group">
-                    <label for="">name</label>
-                    <select name="" id="">
-                        <option value="">male</option>
-                        <option value="">female</option>
+                <div class="form-group" v-for="field in fields"> 
+                    <label for="">{{field.name}}</label>
+                    <select v-if="field.dataSource" v-model="item[field.name]" v-bind:disabled="mode === 2 && field.isKey">
+                        <option v-for="opt in field.dataSource" v-bind:value="opt">
+                            {{opt}}
+                        </option>
                     </select>
+                    <input v-else type="text" v-model="item[field.name]" v-bind:disabled="mode === 2 && field.isKey">
                 </div>
             </div>
             <div class="dialog-footer">
-                <button class="btn btn-large btn-blue" >Save</button>
+                <button class="btn btn-large btn-blue" v-on:click="save()">Save</button>
                 <button class="btn btn-large" v-on:click="close()">Cancle</button>
             </div>
         </div>
@@ -47,7 +41,7 @@
 
 <script>
     module.exports = {
-        props: ["dialogTitle"],
+        props: ["dialogTitle", "fields", "item", "mode"],
         data: function() {
             return {
                 show: false
@@ -61,6 +55,14 @@
         methods: {
             close: function() {
                 this.show = false
+            },
+            save: function() {
+                if(this.mode === 1){
+                    // 使用$dispatch调用data-table的create-item事件
+                    this.$dispatch('create-item');
+                } else if(this.mode === 2) {
+                    this.$dispatch('edit-item');
+                }
             }
         }
     }

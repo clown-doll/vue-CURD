@@ -18,7 +18,7 @@
             <label for="">Search</label>
             <input type="text" v-model="searchQuery">
         </div>
-        <table-component v-bind:data-list="people" v-bind:columns="columns"></table-component>
+        <table-component v-bind:data-list="people" v-bind:columns="columns" v-bind:search-key="searchQuery"></table-component>
     </div>
 </template>
 
@@ -31,13 +31,15 @@
                 searchQuery: "",
                 columns: [
                     {
-                        name: "name"
+                        name: "name",
+                        isKey: true
                     },
                     {
                         name: "age"
                     },
                     {
-                        name: "sex"
+                        name: "sex",
+                        dataSource: ["Male", "Female"]
                     }
                 ],
                 people: [
