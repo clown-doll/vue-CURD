@@ -6,6 +6,8 @@
 */
 
 var webpack = require("webpack");
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
+var vue = require("vue-multi-loader");
 
 module.exports = {
     // 入口文件地址
@@ -23,16 +25,26 @@ module.exports = {
             {
                 test: /\.vue$/,
                 exclude: /node_modules/,
-                loader: "vue"
+                loader: vue.withLoaders({
+                    css: ExtractTextPlugin.extract("css")
+                })
             },
             // 编译css
             {
                 test: /\.css$/,
                 exclude: /node_modules/,
-                loader: "style!css"
+                loader: ExtractTextPlugin.extract("style-loader", "css-loader")
             }
         ]
     },
+    plugins: [
+        new ExtractTextPlugin("style.css", {allChunks: true}),
+        new webpack.optimize.UglifyJsPlugin({
+                compress: {
+                    warnings: false
+                }
+            })
+    ],
     // 服务器配置相关，自动刷新!
     devServer: {
         historyApiFallback:true,
