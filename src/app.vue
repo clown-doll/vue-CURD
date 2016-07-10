@@ -45,7 +45,7 @@
                 people: [
                     {
                         name: "Jack",
-                        age: 30,
+                        age: 32,
                         sex: "Male"
                     },
                     {

@@ -8,15 +8,26 @@
 var webpack = require("webpack");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var vue = require("vue-multi-loader");
+var path = require('path');
 
 module.exports = {
     // 入口文件地址
-    entry: "./src/main.js",
+    //entry: "./src/main.js",
+    entry: [
+        "webpack-dev-server/client?http://localhost:8080/",
+        "webpack/hot/only-dev-server",
+        "./src/main.js"
+    ],
     // 输出
     output: {
-        path: "./dist",
-        filename: "build.js"
+        //path: path.join(__dirname, 'dist/js'),
+        //path: __dirname + '/dist', 
+        // publicPath: '/dist',
+        //filename: "build.js"
+        filename: 'build.js',
+        path: path.resolve(__dirname, 'dist/')
     },
+    devtool: "sourcemap",
     // 加载器
     module: {
         // 加载器
@@ -39,6 +50,7 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin("style.css", {allChunks: true}),
+        new webpack.HotModuleReplacementPlugin(),
         new webpack.optimize.UglifyJsPlugin({
                 compress: {
                     warnings: false
@@ -47,9 +59,10 @@ module.exports = {
     ],
     // 服务器配置相关，自动刷新!
     devServer: {
-        historyApiFallback:true,
-        hot:true,
-        inline:true,
-        progress:true
+        // historyApiFallback: true,
+        // hot: true,
+        // inline: true,
+        // progress: true,
+        contentBase: 'dist'
     }
 }
